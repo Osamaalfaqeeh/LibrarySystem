@@ -103,3 +103,24 @@ Login credentials will be seeded, or you can manually create an Admin via the da
 - Only Admins log into the system.
 - Members (borrowers) are not Identity users — tracked separately as real-world users.
 
+---
+
+## 🖼️ Screenshots
+
+### 🔐 Admin Dashboard  
+![Admin Dashboard](assets/admin-dashboard.png)
+
+### 🧑‍💼 Authors Page  
+![Authors Page](assets/authors-page.png)
+
+### 📘 Book Page  
+![Book Page](assets/book-page.png)
+
+### 🔁 Borrow Records Page  
+![Borrow Records Page](assets/borrow-records-page.png)
+
+### 🏷️ Genres Page  
+![Genres Page](assets/genres-page.png)
+
+### 👥 Members Management Page  
+![Members Management Page](assets/members-management-page.png)
