@@ -1,0 +1,134 @@
+﻿@model LibrarySystem.Application.DTOs.BorrowRecords.BorrowRecordDto
+@{
+    ViewData["Title"] = "Borrow Record Details";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-clipboard-list"></i>
+                Borrow Record Details
+            </h1>
+            <p class="page-subtitle">View detailed information about this borrow record</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>
+                Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Borrow Records</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <!-- Record ID -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-hashtag me-1"></i>
+                        Record ID
+                    </label>
+                    <input class="form-control" value="@Model.Id" disabled />
+                </div>
+
+                <!-- Member Information -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-user me-1"></i>
+                        Member
+                    </label>
+                    <input class="form-control" value="@Model.MemberFullName" disabled />
+                </div>
+
+                <!-- Book Information -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-book me-1"></i>
+                        Book
+                    </label>
+                    <input class="form-control" value="@Model.BookTitle" disabled />
+                </div>
+
+                <!-- Borrowed Date -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-plus me-1"></i>
+                        Borrowed Date
+                    </label>
+                    <input class="form-control" value="@Model.BorrowedAt.ToString("MMM dd, yyyy (dddd)")" disabled />
+                </div>
+
+                <!-- Due Date -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-check me-1"></i>
+                        Due Date
+                    </label>
+                    <input class="form-control @(Model.DueDate < DateTime.Now && !Model.ReturnedAt.HasValue ? "border-danger" : "")"
+                           value="@Model.DueDate.ToString("MMM dd, yyyy (dddd)")" disabled />
+                    @if (Model.DueDate < DateTime.Now && !Model.ReturnedAt.HasValue)
+                    {
+                        <small class="form-text text-danger">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            This book is overdue by @Math.Abs((Model.DueDate - DateTime.Now).Days) days
+                        </small>
+                    }
+                    else if (!Model.ReturnedAt.HasValue)
+                    {
+                        <small class="form-text text-muted">
+                            Due in @((Model.DueDate - DateTime.Now).Days) days
+                        </small>
+                    }
+                </div>
+
+                <!-- Return Status -->
+                <div class="form-group mb-3">
+                    <label class="form-label">
+                        <i class="fas fa-calendar-minus me-1"></i>
+                        Return Status
+                    </label>
+                    @if (Model.ReturnedAt.HasValue)
+                    {
+                        <input class="form-control border-success"
+                               value="Returned on @Model.ReturnedAt.Value.ToString("MMM dd, yyyy (dddd)")" disabled />
+                        <small class="form-text text-success">
+                            <i class="fas fa-check-circle me-1"></i>
+                            Book has been returned successfully
+                        </small>
+                    }
+                    else
+                    {
+                        <input class="form-control border-warning" value="Not Returned" disabled />
+                        <small class="form-text text-warning">
+                            <i class="fas fa-clock me-1"></i>
+                            Book is still checked out
+                        </small>
+                    }
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="form-group mt-4">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                        <i class="fas fa-edit me-1"></i>
+                        Edit Record
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>
+                        Back to List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

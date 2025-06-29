@@ -1,0 +1,105 @@
+﻿@model LibrarySystem.Application.DTOs.Dashboard.DashboardDto
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-tachometer-alt"></i>
+                Library System Dashboard
+            </h1>
+            <p class="page-subtitle">Welcome back, <strong>@User.Identity?.Name</strong></p>
+        </div>
+        <div>
+            <button class="btn btn-outline-primary" onclick="location.reload()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh Data
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats Overview -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+            <div class="card-body text-center">
+                <i class="fas fa-book fa-2x mb-2"></i>
+                <h4 class="mb-1">@Model.TotalBooks</h4>
+                <small>Total Books</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0" style="background: linear-gradient(135deg, #43e97b, #38f9d7); color: white;">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle fa-2x mb-2"></i>
+                <h4 class="mb-1">@Model.AvailableBooks</h4>
+                <small>Available Books</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0" style="background: linear-gradient(135deg, #f093fb, #f5576c); color: white;">
+            <div class="card-body text-center">
+                <i class="fas fa-hand-holding fa-2x mb-2"></i>
+                <h4 class="mb-1">@Model.BorrowedBooks</h4>
+                <small>Currently Borrowed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0" style="background: linear-gradient(135deg, #4facfe, #00f2fe); color: white;">
+            <div class="card-body text-center">
+                <i class="fas fa-users fa-2x mb-2"></i>
+                <h4 class="mb-1">@Model.TotalMembers</h4>
+                <small>Library Members</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a asp-controller="Book" asp-action="Create" class="btn btn-primary w-100">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New Book
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a asp-controller="Book" asp-action="Index" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-book"></i>
+                            Manage Books
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a asp-controller="Author" asp-action="Index" class="btn btn-outline-success w-100">
+                            <i class="fas fa-user-edit"></i>
+                            Manage Authors
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a asp-controller="BorrowRecord" asp-action="Index" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-clipboard-list"></i>
+                            View Borrowings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

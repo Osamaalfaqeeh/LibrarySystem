@@ -1,0 +1,250 @@
+﻿@model IEnumerable<LibrarySystem.Application.DTOs.Books.BookDto>
+
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-book"></i>
+                Books Management
+            </h1>
+            <p class="page-subtitle">Manage your library's book collection</p>
+        </div>
+        <div>
+            <a asp-action="Create" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus-circle"></i>
+                Add New Book
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Books</li>
+    </ol>
+</nav>
+
+<!-- Search and Filter Section -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="text" class="form-control" id="searchInput" placeholder="Search books by title, author, or description...">
+        </div>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" id="availabilityFilter">
+            <option value="">All Books</option>
+            <option value="true">Available Only</option>
+            <option value="false">Borrowed Only</option>
+        </select>
+    </div>
+</div>
+
+<!-- Books Count Info -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">All Books (@Model.Count())</h5>
+    <div class="text-muted">
+        <small>
+            <i class="fas fa-check-circle text-success"></i> @Model.Count(b => b.IsAvailable) Available
+            <span class="mx-2">|</span>
+            <i class="fas fa-hand-holding text-warning"></i> @Model.Count(b => !b.IsAvailable) Borrowed
+        </small>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="fas fa-book-open fa-4x text-muted mb-3"></i>
+        <h4 class="text-muted">No books found</h4>
+        <p class="text-muted">Start building your library by adding your first book.</p>
+        <a asp-action="Create" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus-circle"></i>
+            Add Your First Book
+        </a>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table" id="booksTable">
+            <thead>
+                <tr>
+                    <th>
+                        <i class="fas fa-book me-1"></i>
+                        Title
+                    </th>
+                    <th>
+                        <i class="fas fa-align-left me-1"></i>
+                        Description
+                    </th>
+                    <th>
+                        <i class="fas fa-user-edit me-1"></i>
+                        Author
+                    </th>
+                    <th>
+                        <i class="fas fa-tags me-1"></i>
+                        Genre
+                    </th>
+                    <th>
+                        <i class="fas fa-check-circle me-1"></i>
+                        Status
+                    </th>
+                    <th>
+                        <i class="fas fa-calendar me-1"></i>
+                        Created
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="book-icon me-2">
+                                    <i class="fas fa-book text-primary"></i>
+                                </div>
+                                <div>
+                                    <strong>@book.Title</strong>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="description-cell">
+                                @if (book.Description?.Length > 50)
+                                {
+                                    <span class="description-short">@book.Description.Substring(0, 50)...</span>
+                                    <span class="description-full d-none">@book.Description</span>
+                                    <button class="btn btn-link btn-sm p-0 toggle-description" type="button">
+                                        <small>Show more</small>
+                                    </button>
+                                }
+                                else
+                                {
+                                    @book.Description
+                                }
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-user-circle me-2 text-secondary"></i>
+                                @book.AuthorName
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">@book.GenreName</span>
+                        </td>
+                        <td>
+                            @if (book.IsAvailable)
+                            {
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>
+                                    Available
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-hand-holding me-1"></i>
+                                    Borrowed
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                @book.CreatedAt.ToString("MMM dd, yyyy")
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a asp-action="Details" asp-route-id="@book.Id"
+                                   class="btn btn-outline-info btn-sm"
+                                   data-bs-toggle="tooltip" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@book.Id"
+                                   class="btn btn-outline-warning btn-sm"
+                                   data-bs-toggle="tooltip" title="Edit Book">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@book.Id"
+                                   class="btn btn-outline-danger btn-sm"
+                                   data-bs-toggle="tooltip" title="Delete Book">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#booksTable tbody tr');
+
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Availability filter
+        document.getElementById('availabilityFilter').addEventListener('change', function() {
+            const filterValue = this.value;
+            const tableRows = document.querySelectorAll('#booksTable tbody tr');
+
+            tableRows.forEach(row => {
+                if (filterValue === '') {
+                    row.style.display = '';
+                } else {
+                    const isAvailable = row.querySelector('.badge.bg-success') !== null;
+                    const shouldShow = (filterValue === 'true' && isAvailable) ||
+                                     (filterValue === 'false' && !isAvailable);
+                    row.style.display = shouldShow ? '' : 'none';
+                }
+            });
+        });
+
+        // Toggle description
+        document.querySelectorAll('.toggle-description').forEach(button => {
+            button.addEventListener('click', function() {
+                const cell = this.closest('.description-cell');
+                const shortDesc = cell.querySelector('.description-short');
+                const fullDesc = cell.querySelector('.description-full');
+
+                if (shortDesc.classList.contains('d-none')) {
+                    shortDesc.classList.remove('d-none');
+                    fullDesc.classList.add('d-none');
+                    this.innerHTML = '<small>Show more</small>';
+                } else {
+                    shortDesc.classList.add('d-none');
+                    fullDesc.classList.remove('d-none');
+                    this.innerHTML = '<small>Show less</small>';
+                }
+            });
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+}

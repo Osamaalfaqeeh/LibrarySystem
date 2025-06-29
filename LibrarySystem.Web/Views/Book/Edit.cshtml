@@ -1,0 +1,98 @@
+﻿@model LibrarySystem.Web.ViewModels.BookUpdateViewModel
+@{
+    ViewData["Title"] = "Edit Book";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-edit"></i>
+                Edit Book
+            </h1>
+            <p class="page-subtitle">Update book information and details</p>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Books</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <form asp-action="Edit" method="post">
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="form-group mb-3">
+                        <label asp-for="UpdateDto.Title" class="form-label">
+                            <i class="fas fa-heading me-1"></i>
+                            Title
+                        </label>
+                        <input asp-for="UpdateDto.Title" class="form-control" />
+                        <span asp-validation-for="UpdateDto.Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="UpdateDto.Description" class="form-label">
+                            <i class="fas fa-align-left me-1"></i>
+                            Description
+                        </label>
+                        <textarea asp-for="UpdateDto.Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="UpdateDto.Description" class="text-danger"></span>
+                        <small class="form-text text-muted">Provide a brief description of the book</small>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="UpdateDto.AuthorId" class="form-label">
+                            <i class="fas fa-user-edit me-1"></i>
+                            Author
+                        </label>
+                        <select asp-for="UpdateDto.AuthorId" class="form-control"
+                                asp-items="@(new SelectList(Model.Authors, "Id", "FullName"))">
+                            <option value="">-- Select Author --</option>
+                        </select>
+                        <span asp-validation-for="UpdateDto.AuthorId" class="text-danger"></span>
+                        <small class="form-text text-muted">Choose the book's author</small>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="UpdateDto.GenreId" class="form-label">
+                            <i class="fas fa-tags me-1"></i>
+                            Genre
+                        </label>
+                        <select asp-for="UpdateDto.GenreId" class="form-control"
+                                asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
+                            <option value="">-- Select Genre --</option>
+                        </select>
+                        <span asp-validation-for="UpdateDto.GenreId" class="text-danger"></span>
+                        <small class="form-text text-muted">Select the appropriate genre for this book</small>
+                    </div>
+
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-save me-1"></i>
+                            Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i>
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,255 @@
+﻿@model LibrarySystem.Web.ViewModels.BookCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Book";
+}
+
+<div class="page-header px-4 py-3">
+    <div>
+        <h1 class="page-title">
+            <i class="fas fa-plus-circle"></i>
+            Create New Book
+        </h1>
+        <p class="page-subtitle">Add a new book to your library collection</p>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Books</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-book me-2"></i>
+                    Book Information
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post" id="createBookForm">
+                    <div class="mb-4">
+                        <label asp-for="CreateDto.Title" class="form-label">
+                            <i class="fas fa-heading me-2 text-primary"></i>
+                            Book Title
+                        </label>
+                        <input asp-for="CreateDto.Title" class="form-control form-control-lg"
+                               placeholder="Enter the book title" />
+                        <span asp-validation-for="CreateDto.Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="CreateDto.Description" class="form-label">
+                            <i class="fas fa-align-left me-2 text-primary"></i>
+                            Description
+                        </label>
+                        <textarea asp-for="CreateDto.Description" class="form-control" rows="4"
+                                  placeholder="Enter a brief description of the book"></textarea>
+                        <span asp-validation-for="CreateDto.Description" class="text-danger"></span>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i>
+                            Provide a brief summary or description of the book's content.
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label asp-for="CreateDto.AuthorId" class="form-label">
+                                    <i class="fas fa-user-edit me-2 text-primary"></i>
+                                    Author
+                                </label>
+                                <select asp-for="CreateDto.AuthorId" class="form-select"
+                                        asp-items="@(new SelectList(Model.Authors, "Id", "FullName"))">
+                                    <option value="">-- Select Author --</option>
+                                </select>
+                                <span asp-validation-for="CreateDto.AuthorId" class="text-danger"></span>
+                                <div class="form-text">
+                                    <i class="fas fa-plus"></i>
+                                    <a href="#" class="text-decoration-none" onclick="openAuthorModal()">
+                                        Add new author
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label asp-for="CreateDto.GenreId" class="form-label">
+                                    <i class="fas fa-tags me-2 text-primary"></i>
+                                    Genre
+                                </label>
+                                <select asp-for="CreateDto.GenreId" class="form-select"
+                                        asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
+                                    <option value="">-- Select Genre --</option>
+                                </select>
+                                <span asp-validation-for="CreateDto.GenreId" class="text-danger"></span>
+                                <div class="form-text">
+                                    <i class="fas fa-plus"></i>
+                                    <a href="#" class="text-decoration-none" onclick="openGenreModal()">
+                                        Add new genre
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-check me-2"></i>
+                            Create Book
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-xl-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Tips for Adding Books
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info border-0">
+                    <h6 class="alert-heading">
+                        <i class="fas fa-info-circle"></i>
+                        Quick Tips
+                    </h6>
+                    <ul class="mb-0">
+                        <li>Make sure the book title is accurate and complete</li>
+                        <li>Include relevant keywords in the description for better searching</li>
+                        <li>Select the appropriate genre to help with categorization</li>
+                        <li>If the author or genre doesn't exist, you can add them first</li>
+                    </ul>
+                </div>
+
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Quick Stats
+                    </h6>
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-users text-primary fa-2x mb-2"></i>
+                                <div class="fw-bold">@Model.Authors.Count()</div>
+                                <small class="text-muted">Authors</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-tags text-success fa-2x mb-2"></i>
+                                <div class="fw-bold">@Model.Genres.Count()</div>
+                                <small class="text-muted">Genres</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-book text-warning fa-2x mb-2"></i>
+                                <div class="fw-bold">New</div>
+                                <small class="text-muted">Book</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-link me-2"></i>
+                        Quick Actions
+                    </h6>
+                    <div class="d-grid gap-2">
+                        <a asp-controller="Author" asp-action="Create" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-user-plus me-2"></i>
+                            Add New Author
+                        </a>
+                        <a asp-controller="Genre" asp-action="Create" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-tag me-2"></i>
+                            Add New Genre
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Form validation enhancement
+        document.getElementById('createBookForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.innerHTML = '<span class="loading"></span> Creating...';
+            submitBtn.disabled = true;
+
+            // Re-enable if validation fails
+            setTimeout(() => {
+                if (this.querySelector('.text-danger:not(:empty)')) {
+                    submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Create Book';
+                    submitBtn.disabled = false;
+                }
+            }, 100);
+        });
+
+        // Character counter for description
+        const descriptionField = document.querySelector('[name="CreateDto.Description"]');
+        if (descriptionField) {
+            const counter = document.createElement('div');
+            counter.className = 'form-text text-end';
+            counter.innerHTML = '<span id="charCount">0</span>/500 characters';
+            descriptionField.parentNode.appendChild(counter);
+
+            descriptionField.addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+        }
+
+        // Mock functions for modal dialogs (implement these based on your needs)
+        function openAuthorModal() {
+            // You can implement a modal dialog or redirect to author creation
+            if (confirm('Would you like to go to the Add Author page?')) {
+                window.open('@Url.Action("Create", "Author")', '_blank');
+            }
+        }
+
+        function openGenreModal() {
+            // You can implement a modal dialog or redirect to genre creation
+            if (confirm('Would you like to go to the Add Genre page?')) {
+                window.open('@Url.Action("Create", "Genre")', '_blank');
+            }
+        }
+
+        // Auto-save draft functionality (optional)
+        let draftTimer;
+        const formInputs = document.querySelectorAll('#createBookForm input, #createBookForm textarea, #createBookForm select');
+
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(draftTimer);
+                draftTimer = setTimeout(saveDraft, 2000);
+            });
+        });
+
+        function saveDraft() {
+            // Implement draft saving logic here
+            console.log('Draft saved...');
+        }
+    </script>
+}

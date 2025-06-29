@@ -1,0 +1,168 @@
+﻿@model IEnumerable<LibrarySystem.Application.DTOs.Authors.AuthorDto>
+
+@{
+    ViewData["Title"] = "Authors";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-user-edit"></i>
+                Authors
+            </h1>
+            <p class="page-subtitle">Manage library authors and their information</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Add New Author
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Authors</li>
+    </ol>
+</nav>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">
+                                <i class="fas fa-user me-1"></i>
+                                First Name
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-user me-1"></i>
+                                Last Name
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-id-badge me-1"></i>
+                                Full Name
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                Created
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="fas fa-cogs me-1"></i>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var author in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-muted me-2"></i>
+                                        <span class="fw-medium">@author.FirstName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-muted me-2"></i>
+                                        <span class="fw-medium">@author.LastName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-id-badge text-primary me-2"></i>
+                                        <span class="fw-bold text-primary">@author.FullName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">@author.CreatedAt.ToString("MMM dd")</small>
+                                    <small class="text-muted">@author.CreatedAt.ToString("yyyy")</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@author.Id"
+                                           class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@author.Id"
+                                           class="btn btn-sm btn-outline-warning" title="Edit Author">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                title="Delete Author"
+                                                onclick="confirmDelete('@author.Id', '@author.FullName')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-user-edit text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">No Authors Found</h4>
+                <p class="text-muted">Start by adding your first author to the library system.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Add First Author
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this author?</p>
+                <div class="alert alert-warning">
+                    <strong>Author:</strong> <span id="modalAuthorName"></span><br>
+                    <small class="text-muted">This action cannot be undone.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Cancel
+                </button>
+                <a href="#" id="deleteLink" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>
+                    Delete Author
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(authorId, authorName) {
+            document.getElementById('modalAuthorName').textContent = authorName;
+            document.getElementById('deleteLink').href = '@Url.Action("Delete")/' + authorId;
+
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+    </script>
+}

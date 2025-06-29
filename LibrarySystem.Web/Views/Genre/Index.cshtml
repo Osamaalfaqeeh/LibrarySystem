@@ -1,0 +1,147 @@
+﻿@model IEnumerable<LibrarySystem.Application.DTOs.Genres.GenreDto>
+@{
+    ViewData["Title"] = "Genres";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-tags"></i>
+                Genres
+            </h1>
+            <p class="page-subtitle">Manage book genres and categories</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Add New Genre
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Genres</li>
+    </ol>
+</nav>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">
+                                <i class="fas fa-tag me-1"></i>
+                                Name
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                Created At
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="fas fa-cogs me-1"></i>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var genre in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-bookmark text-primary me-2"></i>
+                                        <span class="fw-medium">@genre.Name</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">@genre.CreatedAt.ToString("MMM dd")</small>
+                                    <small class="text-muted">@genre.CreatedAt.ToString("yyyy")</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@genre.Id"
+                                           class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@genre.Id"
+                                           class="btn btn-sm btn-outline-warning" title="Edit Genre">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger"
+                                                title="Delete Genre"
+                                                onclick="confirmDelete(@genre.Id, '@genre.Name')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-tags text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">No Genres Found</h4>
+                <p class="text-muted">Start by adding your first genre.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Add First Genre
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="fas fa-exclamation-triangle text-danger me-2"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this genre?</p>
+                <div class="alert alert-warning">
+                    <strong>Genre:</strong> <span id="modalGenreName"></span><br>
+                    <small class="text-muted">This action cannot be undone.</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Cancel
+                </button>
+                <a href="#" id="deleteLink" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i>
+                    Delete Genre
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(genreId, genreName) {
+            document.getElementById('modalGenreName').textContent = genreName;
+            document.getElementById('deleteLink').href = '@Url.Action("Delete", "Genres")/' + genreId;
+
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+    </script>
+}

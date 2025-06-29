@@ -1,0 +1,239 @@
+﻿@model IEnumerable<LibrarySystem.Application.DTOs.BorrowRecords.BorrowRecordDto>
+@{
+    ViewData["Title"] = "Borrow Records";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-book-reader"></i>
+                Borrow Records
+            </h1>
+            <p class="page-subtitle">Manage library book borrowing records</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Add New Record
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Borrow Records</li>
+    </ol>
+</nav>
+
+<div class="card shadow">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">
+                                <i class="fas fa-user me-1"></i>
+                                Member
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-book me-1"></i>
+                                Book
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-calendar-plus me-1"></i>
+                                Borrowed
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-calendar-check me-1"></i>
+                                Due Date
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-calendar-minus me-1"></i>
+                                Returned
+                            </th>
+                            <th scope="col">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Status
+                            </th>
+                            <th scope="col" class="text-center">
+                                <i class="fas fa-cogs me-1"></i>
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var record in Model)
+                        {
+                            var isReturned = record.ReturnedAt.HasValue;
+                            var isOverdue = !isReturned && record.DueDate < DateTime.Now;
+                            var rowClass = isReturned ? "table-light" : (isOverdue ? "table-danger-subtle" : "");
+
+                            <tr class="@rowClass">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user-circle text-muted me-2"></i>
+                                        <span class="fw-medium">@record.MemberFullName</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-book text-muted me-2"></i>
+                                        <span>@record.BookTitle</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">@record.BorrowedAt.ToString("MMM dd")</small>
+                                    <small class="text-muted">@record.BorrowedAt.ToString("yyyy")</small>
+                                </td>
+                                <td>
+                                    <small class="text-muted d-block">@record.DueDate.ToString("MMM dd")</small>
+                                    <small class="text-muted">@record.DueDate.ToString("yyyy")</small>
+                                    @if (isOverdue)
+                                    {
+                                        <br>
+                            
+                                        <small class="text-danger fw-bold">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            @Math.Abs((record.DueDate - DateTime.Now).Days)d overdue
+                                        </small>
+                                    }
+                                    else if (!isReturned)
+                                    {
+                                        <br>
+                            
+                                        <small class="text-warning">
+                                            <i class="fas fa-clock me-1"></i>
+                                            @((record.DueDate - DateTime.Now).Days)d left
+                                        </small>
+                                    }
+                                </td>
+                                <td>
+                                    @if (isReturned)
+                                    {
+                                        <small class="text-muted d-block">@record.ReturnedAt?.ToString("MMM dd")</small>
+                                        <small class="text-muted">@record.ReturnedAt?.ToString("yyyy")</small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-warning">
+                                            <i class="fas fa-minus-circle me-1"></i>
+                                            Not Returned
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (isReturned)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>
+                                            Returned
+                                        </span>
+                                    }
+                                    else if (isOverdue)
+                                    {
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            Overdue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock me-1"></i>
+                                            Borrowed
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Details" asp-route-id="@record.Id"
+                                           class="btn btn-sm btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        @if (!isReturned)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@record.Id"
+                                               class="btn btn-sm btn-outline-warning" title="Edit Record">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-success"
+                                                    title="Mark as Returned"
+                                                    onclick="markAsReturned(@record.Id, '@record.BookTitle', '@record.MemberFullName')">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <i class="fas fa-book-open text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">No Borrow Records Found</h4>
+                <p class="text-muted">Start by adding a new borrow record.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    Add First Record
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Return Confirmation Modal -->
+<div class="modal fade" id="returnModal" tabindex="-1" aria-labelledby="returnModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="returnModalLabel">
+                    <i class="fas fa-check-circle text-success me-2"></i>
+                    Confirm Book Return
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to mark this book as returned?</p>
+                <div class="alert alert-info">
+                    <strong>Book:</strong> <span id="modalBookTitle"></span><br>
+                    <strong>Member:</strong> <span id="modalMemberName"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    Cancel
+                </button>
+                <form asp-action="Return" method="post" style="display:inline" id="returnForm">
+                    <input type="hidden" name="BorrowRecordId" id="returnRecordId" />
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i>
+                        Mark as Returned
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markAsReturned(recordId, bookTitle, memberName) {
+            document.getElementById('returnRecordId').value = recordId;
+            document.getElementById('modalBookTitle').textContent = bookTitle;
+            document.getElementById('modalMemberName').textContent = memberName;
+
+            var modal = new bootstrap.Modal(document.getElementById('returnModal'));
+            modal.show();
+        }
+    </script>
+}

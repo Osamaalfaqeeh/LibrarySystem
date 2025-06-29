@@ -1,0 +1,81 @@
+﻿@model LibrarySystem.Web.ViewModels.BorrowRecordCreateViewModel
+
+@{
+    ViewData["Title"] = "Create Borrow Record";
+}
+
+<h2>Create Borrow Record</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="CreateDto.MemberId" class="control-label">User</label>
+        <select asp-for="CreateDto.MemberId" class="form-control"
+                asp-items="@(new SelectList(Model.Members, "Id", "FullName"))">
+            <option value="">-- Select User --</option>
+        </select>
+        <span asp-validation-for="CreateDto.MemberId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CreateDto.BookId" class="control-label">Book</label>
+        <select asp-for="CreateDto.BookId" class="form-control"
+                asp-items="@(new SelectList(Model.Books, "Id", "Title"))">
+            <option value="">-- Select Book --</option>
+        </select>
+        <span asp-validation-for="CreateDto.BookId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CreateDto.BorrowedAt" class="control-label"></label>
+        <input asp-for="CreateDto.BorrowedAt" class="form-control" type="date" id="borrowDate" />
+        <span asp-validation-for="CreateDto.BorrowedAt" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CreateDto.DueDate" class="control-label"></label>
+        <input asp-for="CreateDto.DueDate" class="form-control" type="date" id="dueDate" />
+        <span asp-validation-for="CreateDto.DueDate" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Set default dates
+            var tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            // Set initial min date for due date
+            updateDueDateMin();
+
+            // Update due date minimum when borrow date changes
+            $('#borrowDate').on('change', function() {
+                updateDueDateMin();
+
+                // Auto-update due date to be borrow date + 1 day
+                var borrowDate = new Date($(this).val());
+                if (borrowDate) {
+                    var newDueDate = new Date(borrowDate);
+                    newDueDate.setDate(newDueDate.getDate() + 1);
+                    $('#dueDate').val(newDueDate.toISOString().split('T')[0]);
+                }
+            });
+
+            function updateDueDateMin() {
+                var borrowDate = $('#borrowDate').val();
+                if (borrowDate) {
+                    var minDueDate = new Date(borrowDate);
+                    minDueDate.setDate(minDueDate.getDate() + 1); // Due date must be at least 1 day after borrow date
+                    $('#dueDate').attr('min', minDueDate.toISOString().split('T')[0]);
+                }
+            }
+        });
+    </script>
+}

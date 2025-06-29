@@ -1,0 +1,202 @@
+﻿@model LibrarySystem.Application.DTOs.Authors.CreateAuthorDto
+
+@{
+    ViewData["Title"] = "Create Author";
+}
+
+<div class="page-header px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">
+                <i class="fas fa-user-plus"></i>
+                Create New Author
+            </h1>
+            <p class="page-subtitle">Add a new author to the library system</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Dashboard</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Authors</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create New Author</li>
+    </ol>
+</nav>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Author Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="FirstName" class="form-control" id="firstNameInput" placeholder="First Name" />
+                                <label for="firstNameInput">
+                                    <i class="fas fa-user me-1"></i>
+                                    First Name
+                                </label>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input asp-for="LastName" class="form-control" id="lastNameInput" placeholder="Last Name" />
+                                <label for="lastNameInput">
+                                    <i class="fas fa-user me-1"></i>
+                                    Last Name
+                                </label>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="fullNamePreview" placeholder="Full Name Preview" readonly />
+                                <label for="fullNamePreview">
+                                    <i class="fas fa-id-badge me-1"></i>
+                                    Full Name Preview
+                                </label>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    This preview shows how the full name will appear
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-1"></i>
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i>
+                            Create Author
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Tips
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                    <i class="fas fa-check-circle text-success me-3 mt-1"></i>
+                    <div>
+                        <h6 class="mb-1">Complete Information</h6>
+                        <p class="text-muted small mb-0">Make sure to enter both first and last names for better organization.</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start mb-3">
+                    <i class="fas fa-spell-check text-warning me-3 mt-1"></i>
+                    <div>
+                        <h6 class="mb-1">Proper Formatting</h6>
+                        <p class="text-muted small mb-0">Use proper capitalization for author names (e.g., "John Smith").</p>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start">
+                    <i class="fas fa-search text-primary me-3 mt-1"></i>
+                    <div>
+                        <h6 class="mb-1">Check for Duplicates</h6>
+                        <p class="text-muted small mb-0">Verify the author doesn't already exist in the system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow mt-3">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-question-circle me-2"></i>
+                    Need Help?
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <i class="fas fa-user-friends text-muted" style="font-size: 2rem;"></i>
+                <p class="mt-2 text-muted small">
+                    If you need assistance with author management, contact your system administrator.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        // Live preview of full name
+        function updateFullNamePreview() {
+            const firstName = document.getElementById('firstNameInput').value.trim();
+            const lastName = document.getElementById('lastNameInput').value.trim();
+            const preview = document.getElementById('fullNamePreview');
+
+            if (firstName || lastName) {
+                preview.value = `${firstName} ${lastName}`.trim();
+            } else {
+                preview.value = '';
+            }
+        }
+
+        // Add event listeners
+        document.getElementById('firstNameInput').addEventListener('input', updateFullNamePreview);
+        document.getElementById('lastNameInput').addEventListener('input', updateFullNamePreview);
+
+        // Initialize preview
+        updateFullNamePreview();
+    </script>
+}
+
+<style>
+    .page-title {
+        margin-bottom: 0.25rem;
+        font-size: 1.75rem;
+        font-weight: 600;
+    }
+
+    .page-subtitle {
+        color: #6c757d;
+        margin-bottom: 0;
+        font-size: 0.95rem;
+    }
+
+    .form-floating > label {
+        opacity: 0.7;
+    }
+
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        opacity: 1;
+    }
+
+    #fullNamePreview {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        color: #495057;
+    }
+</style>
